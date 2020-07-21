@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
@@ -16,7 +17,6 @@ const client = new ApolloClient({
 });
 
 export async function getStaticPaths() {
-  debugger
   const { data } = await client.query({
     query: gql`
       query {
@@ -31,7 +31,7 @@ export async function getStaticPaths() {
     params: { slug: app.slug }
   }))
 
-  return { paths, fallback: false }
+  return { paths, fallback: true }
 }
 
 // params will contain the id for each generated page.
@@ -53,12 +53,21 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       app: data.app
-    }
+    },
+    unstable_revalidate: 60
   }
 }
 
 export default function App({ app }) {
+  const router = useRouter()
+
   return (
-    <h1>{app.name}</h1>
+    <div>
+      {router.isFallback ? (
+        <span>Loading</span>
+      ) : (
+        <h1>{app.name}</h1>
+      )}
+    </div>
   )
 }
