@@ -6,7 +6,7 @@ import fetch from 'node-fetch';
 
 const cache = new InMemoryCache();
 const link = new HttpLink({
-  uri: 'http://localhost:3002/api/graphql.json',
+  uri: 'https://flourish-app-store.herokuapp.com/api/graphql.json',
   fetch: fetch
 });
 
